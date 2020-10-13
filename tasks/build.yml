@@ -13,12 +13,17 @@
     - "{{ sansible_zookeeper_data_dir }}"
     - "{{ sansible_zookeeper_log_dir }}"
 
+- name: Check if Zookeeper exists
+  stat: path="/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
+  register: zk
+
 - name: Download ZooKeeper
   become: yes
   become_user: "{{ sansible_zookeeper_user }}"
   get_url:
     url: "{{ sansible_zookeeper_download_url }}"
     dest: "/home/{{ sansible_zookeeper_user }}/zookeeper-{{ sansible_zookeeper_version }}.tar.gz"
+  when: not zk.stat.exists
 
 - name: Unpack Zookeeper
   become: yes
